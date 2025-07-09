@@ -1,0 +1,51 @@
+<main>
+    <div class="actions">
+        <h2>Add New Expense</h2>
+        <form action="/expenses" method="POST">
+            <div>
+                <label for="description">Description:</label>
+                <input type="text" id="description" name="description" required>
+            </div>
+            <div>
+                <label for="amount">Amount:</label>
+                <input type="number" step="0.01" id="amount" name="amount" required>
+            </div>
+            <div>
+                <label for="date">Date:</label>
+                <input type="date" id="date" name="date">
+            </div>
+            <button type="submit" class="btn-primary">Add Expense</button>
+        </form>
+    </div>
+
+    <h2>Expense History</h2>
+    <% if (expenses.length > 0) { %>
+        <table>
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% expenses.forEach(expense => { %>
+                    <tr>
+                        <td><%= expense.description %></td>
+                        <td>$<%= parseFloat(expense.amount).toFixed(2) %></td>
+                        <td><%= new Date(expense.date).toLocaleDateString() %></td>
+                        <td>
+                            <a href="/expenses/<%= expense.id %>/edit" class="btn-edit">Edit</a>
+                            <form action="/expenses/<%= expense.id %>?_method=DELETE" method="POST" style="display: inline;">
+                                <button type="submit" class="btn-delete" onclick="return confirm('Are you sure you want to delete this expense?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    <% } else { %>
+        <p>No expenses recorded yet.</p>
+    <% } %>
+</main>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1 class="site-title">Expense Tracker</h1>
+    </header>
+    <div class="container">
+        <aside class="sidebar">
+            <button id="new-expense-btn" class="btn-secondary">New Expense</button>
+            <div id="new-expense-form" style="display: none;">
+                <%- include('partials/new-expense-form') %>
+            </div>
+            <ul class="navigation">
+                <li><a href="/" class="<%= body === 'index' ? 'active' : '' %>">Expense List</a></li>
+                <li><a href="/dashboard" class="<%= body === 'dashboard' ? 'active' : '' %>">Dashboard</a></li>
+                <li><a href="/monthly" class="<%= body === 'monthly' ? 'active' : '' %>">Monthly</a></li>
+            </ul>
+        </aside>
+        <main class="main-content">
+            <%- body === 'index' ? include('partials/expense-list') : '' %>
+            <%- body === 'dashboard' ? include('dashboard') : '' %>
+            <%- body === 'monthly' ? include('monthly-report') : '' %>
+        </main>
+    </div>
+    <footer>
+        <p>&copy; <%= new Date().getFullYear() %> My Expense Tracker</p>
+    </footer>
+    <script src="/script.js"></script>
+    <% if (body === 'dashboard') { %>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            const categoryData = <%- JSON.stringify(categoryData) %>;
+            const chartCanvas = document.getElementById('expensePieChart');
+
+            if (categoryData && categoryData.length > 0 && chartCanvas) {
+                const labels = categoryData.map(item => item.category);
+                const data = categoryData.map(item => item.total);
+                const backgroundColors = generatePalette(categoryData.length);
+
+                new Chart(chartCanvas, {
+                    type: 'pie',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: backgroundColors,
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Expenses by Category'
+                            }
+                        }
+                    },
+                    plugins: []
+                });
+            }
+
+            function generatePalette(numColors) {
+                const palette = [];
+                for (let i = 0; i < numColors; i++) {
+                    const hue = Math.round((i / numColors) * 360);
+                    palette.push(`hsl(${hue}, 70%, 60%)`);
+                }
+            }
+        </script>
+    <% } %>
+    <% if (body === 'monthly') { %>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            let monthlyChart;
+            let dailyChart;
+
+            function renderMonthlyChart(monthlyData) {
+                const monthlyCanvas = document.getElementById('monthlyExpenseChart');
+                if (monthlyCanvas) {
+                    const months = monthlyData.map(item => item.month);
+                    const totals = monthlyData.map(item => parseFloat(item.total)); // Ensure total is a number
+
+                    if (monthlyChart) {
+                        monthlyChart.destroy(); // Destroy existing chart
+                    }
+
+                    monthlyChart = new Chart(monthlyCanvas, {
+                        type: 'bar',
+                        data: {
+                            labels: months,
+                            datasets: [{
+                                label: 'Monthly Expenses',
+                                data: totals,
+                                backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'Total Expenses ($)'
+                                    }
+                                },
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Month'
+                                    }
+                                }
+                            },
+                            onClick: handleMonthlyBarClick // Add click handler
+                        }
+                    });
+                }
+            }
+
+            function renderDailyChart(dailyData, selectedMonth) {
+                const dailyCanvas = document.getElementById('dailyExpenseChart');
+                if (dailyCanvas) {
+                    const days = dailyData.map(item => item.day);
+                    const totals = dailyData.map(item => parseFloat(item.total)); // Ensure total is a number
+
+                    if (dailyChart) {
+                        dailyChart.destroy(); // Destroy existing chart
+                    }
+
+                    dailyChart = new Chart(dailyCanvas, {
+                        type: 'bar',
+                        data: {
+                            labels: days,
+                            datasets: [{
+                                label: `Daily Expenses for ${selectedMonth}`,
+                                data: totals,
+                                backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                                borderColor: 'rgba(255, 99, 132, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'Total Expenses ($)'
+                                    }
+                                },
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Day'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            async function handleMonthlyBarClick(event, elements) {
+                if (elements.length > 0) {
+                    const clickedMonth = monthlyChart.data.labels[elements[0].index];
+                    const response = await fetch(`/monthly/daily/${clickedMonth}`);
+                    if (response.ok) {
+                        const dailyData = await response.json();
+                        renderDailyChart(dailyData, clickedMonth);
+                    } else {
+                        console.error('Failed to fetch daily data');
+                    }
+                }
+            }
+
+            // Fetch initial monthly data on page load
+            fetch('/monthly/data')
+                .then(response => response.json())
+                .then(data => renderMonthlyChart(data))
+                .catch(error => console.error('Error fetching monthly data:', error));
+
+        </script>
+
+    <% } %>
+</body>
+</html>
+
+
+
