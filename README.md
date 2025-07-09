@@ -1,2 +1,0 @@
-# TrackMate
-Personal Finance Management
