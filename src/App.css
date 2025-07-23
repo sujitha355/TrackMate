@@ -1,0 +1,217 @@
+body {
+  margin: 0;
+  padding: 0;
+  background: #f0f4f8;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.App {
+  width: 100vw;
+  min-height: 100vh;
+  margin: 0;
+  padding: 32px 5vw 32px 5vw;
+  background: #fff;
+  border-radius: 0;
+  box-shadow: none;
+  box-sizing: border-box;
+}
+
+h1 {
+  margin-bottom: 24px;
+  color: #2d3748;
+  text-align: left;
+}
+
+.expense-form,
+.reminder-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+  justify-content: flex-start;
+}
+.expense-form input,
+.reminder-form input {
+  flex: 1 1 200px;
+  min-width: 180px;
+  padding: 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+.expense-form button,
+.reminder-form button {
+  padding: 10px 20px;
+  background: #3182ce;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.expense-form button:hover {
+  background: #2563eb;
+}
+.reminder-form button {
+  background: #805ad5;
+}
+.reminder-form button:hover {
+  background: #6b46c1;
+}
+
+.expense-list {
+  width: 100%;
+  margin-bottom: 24px;
+}
+.expense-item,
+.reminder-item {
+  display: grid;
+  grid-template-columns: 140px 1fr 120px auto;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+.expense-item span,
+.reminder-item span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.expense-item span:nth-child(1),
+.reminder-item span:nth-child(1) {
+  text-align: left;
+}
+.expense-item span:nth-child(2),
+.reminder-item span:nth-child(2) {
+  text-align: center;
+}
+.expense-item span:nth-child(3),
+.reminder-item span:nth-child(3) {
+  text-align: right;
+  padding-right: 12px;
+}
+.expense-item .expense-actions,
+.reminder-item .reminder-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.expense-item button {
+  padding: 6px 14px;
+  background: #e53e3e;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+.expense-item button:first-of-type {
+  background: #38a169;
+}
+.expense-item button:first-of-type:hover {
+  background: #2f855a;
+}
+.expense-item button:hover {
+  background: #c53030;
+}
+.reminder-item.due {
+  background: #fff5f5;
+}
+
+.expense-summary {
+  background: #f7fafc;
+  padding: 20px 24px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  text-align: left;
+  max-width: 600px;
+  width: 100%;
+}
+.expense-summary h2 {
+  margin: 0 0 8px 0;
+  color: #2b6cb0;
+}
+
+.reminder-list {
+  width: 100%;
+  margin-bottom: 24px;
+}
+.reminder-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+.reminder-item span {
+  display: block;
+  padding: 0 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.reminder-item span:nth-child(1) {
+  flex: 0 0 120px;
+  min-width: 100px;
+  max-width: 140px;
+}
+.reminder-item span:nth-child(2) {
+  flex: 2 1 300px;
+  min-width: 180px;
+  max-width: 100%;
+}
+.reminder-item span:nth-child(3) {
+  flex: 0 0 100px;
+  min-width: 80px;
+  max-width: 120px;
+  text-align: right;
+}
+.reminder-item .reminder-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+.reminder-item button {
+  padding: 6px 14px;
+  background: #e53e3e;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+.reminder-item button:hover {
+  background: #c53030;
+}
+.reminder-item.due {
+  background: #fff5f5;
+}
+.reminder-item .edit-btn {
+  background: #38a169;
+}
+.reminder-item .edit-btn:hover {
+  background: #2f855a;
+}
+.reminder-item .paid-btn {
+  background: #3182ce;
+}
+.reminder-item .paid-btn:hover {
+  background: #2563eb;
+}
+
+@media (max-width: 900px) {
+  .App {
+    padding: 24px 2vw;
+  }
+  .expense-summary {
+    max-width: 100%;
+    padding: 16px 8px;
+  }
+  .expense-form input,
+  .reminder-form input {
+    min-width: 100px;
+  }
+}
